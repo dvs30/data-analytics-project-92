@@ -45,7 +45,7 @@ select
 from total_avg
 	cross join average
 where total_avg.average_income < average.average
-order by total_avg.average_income desc;
+order by total_avg.average_income;
 
 /*Задание 5.3 Третий отчет содержит информацию о выручке по дням недели. 
 Каждая запись содержит имя и фамилию продавца, день недели и суммарную выручку*/
@@ -104,7 +104,7 @@ from temp_customers;
 Итоговая таблица должна быть отсортирована по дате по возрастанию.*/
 select 
 	TO_CHAR(s.sale_date, 'YYYY-MM') as date,
-	count(s.customer_id) as total_customers,
+	count(distinct s.customer_id) as total_customers,
 	sum(p.price * s.quantity) as income
 from sales s
 	inner join products p 
