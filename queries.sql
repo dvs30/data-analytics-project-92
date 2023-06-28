@@ -49,17 +49,24 @@ order by total_avg.average_income;
 
 /*Задание 5.3 Третий отчет содержит информацию о выручке по дням недели. 
 Каждая запись содержит имя и фамилию продавца, день недели и суммарную выручку*/
+with total_result as(
 select
 	concat(e.first_name, ' ',e.last_name) as name,
-	TO_CHAR(s.sale_date, 'day'),
-	sum(p.price * s.quantity) as income
+	TO_CHAR(s.sale_date, 'ID-day') as weekday,
+	round(sum(p.price * s.quantity),0) as income
 from sales s
 	inner join employees e 
  	on e.employee_id = s.sales_person_id
  	inner join products p 
  	on p.product_id = s.product_id
-group by concat(e.first_name, ' ',e.last_name), s.sale_date
-order by s.sale_date;
+group by concat(e.first_name, ' ',e.last_name), TO_CHAR(s.sale_date, 'ID-day')
+order by TO_CHAR(s.sale_date, 'ID-day'), concat(e.first_name, ' ',e.last_name)
+)
+select 
+	total_result.name,
+	SPLIT_PART(total_result.weekday, '-', 2) as weekday,
+	total_result.income
+from total_result;
 
 /*Задание 6.1 Первый отчет - количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+.*/
 create temporary table temp_customers
