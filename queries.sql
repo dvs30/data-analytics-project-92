@@ -69,42 +69,16 @@ select
 from total_result;
 
 /*Задание 6.1 Первый отчет - количество покупателей в разных возрастных группах: 16-25, 26-40 и 40+.*/
-create temporary table temp_customers
-(
-age_category VARCHAR(80),
-count INTEGER default 0
-)
-on commit delete rows;
-
-with first_report as(
 select 
-	'16-25' as age_category,
-	count(age) as count
-from customers
-where age >= 16 and age <= 25
-)
-insert into temp_customers select * from first_report;
-
-with second_report as(
-select 
-	'26-40' as age_category,
-	count(age) as count
-from customers
-where age >= 26 and age <= 40
-)
-insert into temp_customers select * from second_report;
-
-with third_report as(
-select 
-	'40+' as age_category,
-	count(age) as count
-from customers
-where age > 40
-)
-insert into temp_customers select * from third_report;
-
-select age_category, count
-from temp_customers;
+case
+	when c.age >= 16 and c.age <= 25 then '16-25'
+	when c.age >= 26 and c.age <= 40 then '26-40'
+	when c.age > 40 then '40+'
+end as age_category,
+count(c.age) as count
+from customers c
+group by age_category
+order by age_category;
 
 /*Задание 6.2 Во втором отчете предоставьте данные по количеству уникальных покупателей и выручке, 
 которую они принесли. Сгруппируйте данные по дате, которая представлена в числовом виде ГОД-МЕСЯЦ. 
